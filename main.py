@@ -32,17 +32,23 @@ app.add_middleware(
 
 @app.get("/test")
 def root():
-    DB_NAME = "Test"
-    cnx = create_engine('mysql+pymysql://root:focus123@localhost:3306/focus') 
-    list =[]
-    with cnx.connect() as conn:
-        q="SELECT castforename FROM msacast LIMIT 0,10"
-        my_cursor=conn.execute(text(q))
-        my_data=my_cursor.fetchall()
-        for row in my_data:
-            list.append(row[0])
+    if 'OPENAI_API_KEY' in os.environ:
+    return("Environment variable is set.")
+    value = os.environ['OPENAI_API_KEY']
+    return("Value:", value)
+else:
+    print("Environment variable is not set.")
+    #DB_NAME = "Test"
+    #cnx = create_engine('mysql+pymysql://root:focus123@localhost:3306/focus') 
+    #list =[]
+   # with cnx.connect() as conn:
+       # q="SELECT castforename FROM msacast LIMIT 0,10"
+       # my_cursor=conn.execute(text(q))
+        #my_data=my_cursor.fetchall()
+        #for row in my_data:
+           # list.append(row[0])
             #print (row)            
-        return list
+        #return list
 # Route to add a item
 
 @app.get("/items/{item_id}")
