@@ -17,6 +17,8 @@ import os
 app = FastAPI()
 origins = ["*"]
 
+api_key = os.getenv('OPENAI_API_KEY')
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -45,7 +47,7 @@ def root():
 
 @app.get("/items/{item_id}")
 def list_item(item_id: int) -> dict[str, int]:    
-    #os.environ['OPENAI_API_KEY'] = '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'
+   
 
     #st.set_page_config(page_title="AI APP TO CHAT WITH SQL DB")
     #st.header="ASK ANYTHING ABOUT YOUR DB"
@@ -55,7 +57,7 @@ def list_item(item_id: int) -> dict[str, int]:
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
-    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key='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')
+    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=api_key)
 
     agent=create_sql_agent(llm=llm,toolkit=SQLDatabaseToolkit(db=db, llm=llm),agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,verbose=True)
     testData = agent.run('How many programmes are there?')
@@ -70,7 +72,7 @@ def add_item(item_name: str):
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
-    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key='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')
+    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=api_key)
 
     agent=create_sql_agent(llm=llm,toolkit=SQLDatabaseToolkit(db=db, llm=llm),agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,verbose=True)
     testData = agent.run(item_name)
@@ -85,7 +87,7 @@ def convert(input:ItemPayload):
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
-    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key='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')
+    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=api_key)
 
     agent=create_sql_agent(llm=llm,toolkit=SQLDatabaseToolkit(db=db, llm=llm),agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,verbose=True)
     testData = agent.run(input.item_name)
