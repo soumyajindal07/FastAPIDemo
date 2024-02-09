@@ -1,2 +1,6 @@
 fastapi
 uvicorn
+langchain
+langchain-community 
+pydantic
+SQLAlchemy
