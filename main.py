@@ -33,9 +33,9 @@ app.add_middleware(
 @app.get("/test")
 def root():
     if 'OPENAI_API_KEY' in os.environ:
-    return("Environment variable is set.")
-    value = os.environ['OPENAI_API_KEY']
-    return("Value:", value)
+        return("Environment variable is set.")
+        value = os.environ['OPENAI_API_KEY']
+        return("Value:", value)
 else:
     print("Environment variable is not set.")
     #DB_NAME = "Test"
