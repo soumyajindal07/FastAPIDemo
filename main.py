@@ -31,12 +31,15 @@ app.add_middleware(
 def root():
     DB_NAME = "Test"
     cnx = create_engine('mysql+pymysql://root:focus123@localhost:3306/focus') 
+    list =[]
     with cnx.connect() as conn:
         q="SELECT castforename FROM msacast LIMIT 0,10"
         my_cursor=conn.execute(text(q))
         my_data=my_cursor.fetchall()
         for row in my_data:
-            print(row)
+            list.append(row[0])
+            #print (row)            
+        return list
 # Route to add a item
 
 @app.get("/items/{item_id}")
