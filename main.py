@@ -63,13 +63,13 @@ def list_item(item_id: int) -> dict[str, int]:
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
-    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=api_key)
+    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=os.environ['OPENAI_API_KEY'])
 
     agent=create_sql_agent(llm=llm,toolkit=SQLDatabaseToolkit(db=db, llm=llm),agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,verbose=True)
     testData = agent.run('How many programmes are there?')
-    raise HTTPException(status_code=404, detail= testData)
+    #raise HTTPException(status_code=404, detail= testData)
     
-    return {"item": 1}
+    return {"item": testData}
 
 # Route to add an item
 @app.get("/data")
