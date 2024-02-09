@@ -27,9 +27,16 @@ app.add_middleware(
 
 #grocery_list: dict[int, ItemPayload] = {}
 
-#@app.get("/")
-#def root():
-   # return {"message": "Hello World"}
+@app.get("/test")
+def root():
+    DB_NAME = "Test"
+    cnx = create_engine('mysql+pymysql://root:focus123@localhost:3306/focus') 
+    with cnx.connect() as conn:
+        q="SELECT castforename FROM msacast LIMIT 0,10"
+        my_cursor=conn.execute(text(q))
+        my_data=my_cursor.fetchall()
+        for row in my_data:
+            print(row)
 # Route to add a item
 
 @app.get("/items/{item_id}")
@@ -40,7 +47,7 @@ def list_item(item_id: int) -> dict[str, int]:
     #st.header="ASK ANYTHING ABOUT YOUR DB"
     #query=st.text_input("ask question here")
 
-    cs="mysql+pymysql://root:soumya@localhost:3306/msafocus"
+    cs="mysql+pymysql://root:focus123@localhost:3306/focus"
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
@@ -55,7 +62,7 @@ def list_item(item_id: int) -> dict[str, int]:
 # Route to add an item
 @app.get("/data")
 def add_item(item_name: str):
-    cs="mysql+pymysql://root:soumya@localhost:3306/msafocus"
+    cs="mysql+pymysql://root:focus123@localhost:3306/focus"
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
@@ -70,7 +77,7 @@ def add_item(item_name: str):
 
 @app.post("/convert")
 def convert(input:ItemPayload):
-    cs="mysql+pymysql://root:soumya@localhost:3306/msafocus"
+    cs="mysql+pymysql://root:focus123@localhost:3306/focus"
     db_engine=create_engine(cs)
     db=SQLDatabase(db_engine)
 
