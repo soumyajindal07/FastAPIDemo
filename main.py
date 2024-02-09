@@ -10,6 +10,7 @@ from langchain.prompts.chat import ChatPromptTemplate
 from langchain import OpenAI
 from sqlalchemy import create_engine
 from pydantic import BaseModel
+from sqlalchemy import text
 import os
 #import streamlit
 
