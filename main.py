@@ -36,8 +36,8 @@ def root():
         return("Environment variable is set.")
         value = os.environ['OPENAI_API_KEY']
         return("Value:", value)
-else:
-    print("Environment variable is not set.")
+    else:
+        print("Environment variable is not set.")
     #DB_NAME = "Test"
     #cnx = create_engine('mysql+pymysql://root:focus123@localhost:3306/focus') 
     #list =[]
