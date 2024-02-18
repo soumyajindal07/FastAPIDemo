@@ -27,6 +27,25 @@ app.add_middleware(
     allow_headers=["*"]
     
 )
+prompt=ChatPromptTemplate.from_messages(
+    [
+        ("system",
+        """
+        you are a very intelligent AI assistant who is expert in identifing relevant questions from user and converting into sql queriers to generate coorect answer.
+        Please use the belolw context to write the microsoft sql queries.
+        context:
+        you must query against the connected database,it has total 4 tables,these are msacast,msaprogramme,msaprogrammecast,msareftype,Supplier.
+        msaprogramme table has ProgrammeID,ProgrammeTitle,ProgrammeType columns.It gives the programme information.
+        msareftype table has TypeID,TypeDescription,TypeSeries,TypeContainer columns.This gives type of programme specific information.
+        msacast table has CastID,CastForename,CastBiography columns.This gives information on casts.
+        msaProgrammeCast table has CastID,ProgrammeID.This table gives information on the cast Ids linked to programme Ids.
+        As an expert you must use joins whenever required.
+        """
+        ),
+        ("user","{question}\ ai: ")
+    ]
+
+        )
 
 #grocery_list: dict[int, ItemPayload] = {}
 
@@ -96,7 +115,7 @@ def convert(input:ItemPayload):
     llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=os.environ['OPENAI_API_KEY'])
 
     agent=create_sql_agent(llm=llm,toolkit=SQLDatabaseToolkit(db=db, llm=llm),agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,verbose=True)
-    testData = agent.run(input.item_name)
+    testData = agent.run(prompt.format_prompt(question = input.item_name))
     #raise HTTPException(status_code=404, detail= testData)
     
     return testData
