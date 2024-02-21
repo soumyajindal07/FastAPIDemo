@@ -31,7 +31,7 @@ prompt=ChatPromptTemplate.from_messages(
     [
         ("system",
         """
-        you are a very intelligent AI assistant who is expert in identifing relevant questions from user and converting into sql queriers to generate coorect answer.
+       you are a very intelligent AI assistant who is expert in identifing relevant questions from user and converting into sql queriers.
         Please use the belolw context to write the microsoft sql queries.
         context:
         you must query against the connected database,it has total 4 tables,these are msacast,msaprogramme,msaprogrammecast,msareftype,Supplier.
@@ -39,6 +39,7 @@ prompt=ChatPromptTemplate.from_messages(
         msareftype table has TypeID,TypeDescription,TypeSeries,TypeContainer columns.This gives type of programme specific information.
         msacast table has CastID,CastForename,CastBiography columns.This gives information on casts.
         msaProgrammeCast table has CastID,ProgrammeID.This table gives information on the cast Ids linked to programme Ids.
+        You will always return final answer as sql queries and will not execute them.
         As an expert you must use joins whenever required.
         """
         ),
@@ -119,3 +120,32 @@ def convert(input:ItemPayload):
     #raise HTTPException(status_code=404, detail= testData)
     
     return testData
+
+@app.post("/generatesqlfromtext")
+def generatesqlfromtext(input:ItemPayload):
+    cs="mysql+pymysql://root:focus123@localhost:3306/focus"
+    db_engine=create_engine(cs)
+    db=SQLDatabase(db_engine)
+    outputRows = []
+    llm=OpenAI(temperature=0.0,verbose = True, openai_api_key=os.environ['OPENAI_API_KEY'])
+    try:
+        agent=create_sql_agent(llm=llm,toolkit=SQLDatabaseToolkit(db=db, llm=llm), agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,verbose=True)
+        query = agent.run(prompt.format_prompt(question = input.item_name))
+        finalQuery = text(""+ query +"")
+        print(finalQuery)
+        
+        #At times, LLM results doesnt show Interpretability so checking if the select is in the output to perform query 
+        if "SELECT " in str(finalQuery):
+           # print("If")
+            with db_engine.connect() as conn:        
+                my_cursor=conn.execute(finalQuery)
+                my_data=my_cursor.fetchall()
+                for row in my_data:                      
+                    outputRows.append(list(row))
+                return outputRows            
+        else:
+            #print("else")
+            outputRows.append(finalQuery)
+    except:
+        return "Something went wrong..Please try again later"
+
