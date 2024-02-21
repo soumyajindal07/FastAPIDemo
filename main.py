@@ -145,7 +145,7 @@ def generatesqlfromtext(input:ItemPayload):
                 return outputRows            
         else:
             #print("else")
-            outputRows.append(finalQuery)
+            outputRows.append(finalQuery.text)
             return outputRows
     except:
         return "Something went wrong..Please try again later"
